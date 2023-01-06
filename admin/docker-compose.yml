@@ -1,21 +1,31 @@
+#Datei wird verwendet, um mehrere Container für eine Anwendung zu erstellen und zu verwalten
+
 version: '3.11'
-services:
-  backend:
+services: #Definition der verschiedenen Container, die gestartet werden sollen
+  backend: #Containername
     build:
       context: .
       dockerfile: Dockerfile
+    command: 'python manage.py runserver 0.0.0.0:8000' #Startet Django Entwicklungsserver auf Port 8000
     ports:
-      - 8000:8000
+      - 8000:8000 #Port 8000 auf Host wird auf Port 8000 im Container gemappt, sodass Anwendung von außerhalb des Containers erreichbar ist
     volumes:
       - .:/app
     depends_on:
       - db
 
+  queue: #Containername
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: 'python -u consumer.py' #führt Skript "consumer.py" aus
+    depends_on:
+      - db
 
-  db:
+  db: #Containername
     image: mysql:5.7.22
     restart: always
-    environment:
+    environment: #Festlegung der Umgebungsvariablen für Datenbankverbindung
       MYSQL_DATABASE: admin
       MYSQL_USER: root
       MYSQL_PASSWORD: root
@@ -23,5 +33,5 @@ services:
     volumes:
       - .dbdata:/var/lib/mysql
     ports:
-      - 33066:3306
+      - 33066:3306 #Port 3306 auf Host wird auf Port 3306 im Container gemappt, sodass Datenbank von außerhalb des Containers erreichbar ist
     

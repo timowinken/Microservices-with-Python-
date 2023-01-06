@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-slrqwl-&8o9uq6!qfhn6o-1^ggr6$tv-&#rb#)e3j(l=lo3!34
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['host.docker.internal', 'localhost']
 
 
 # Application definition
@@ -53,6 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+#Weiterleitung von eingehenden HTTP-Requests an entsprechende Django-Anwendung
 ROOT_URLCONF = 'admin.urls'
 
 TEMPLATES = [

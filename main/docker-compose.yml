@@ -1,0 +1,37 @@
+#Datei wird verwendet, um mehrere Container für eine Anwendung zu erstellen und zu verwalten
+version: '3.11'
+services: #Definition der verschiedenen Container, die gestartet werden sollen
+  backend: #Containername
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: 'python main.py' #Starten des Containers
+    ports:
+      - 8001:5000 #Container wird auf dem Host-Port 8001 und im Container auf Port 5000 veröffentlicht
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+
+  queue: #Containername
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: 'python -u consumer.py' #führt Skript "consumer.py" aus
+    depends_on:
+      - db
+
+
+  db: #Containername
+    image: mysql:5.7.22
+    restart: always
+    environment: #Festlegung der Umgebungsvariablen für Datenbankverbindung
+      MYSQL_DATABASE: main
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - .dbdata:/var/lib/mysql
+    ports:
+      - 33067:3306 #Port 33067 auf lokalem System wird durch Port 3306 im Container gemappt. Anwendungen, die auf Host laufen, können auf Datenbank im Container zugreifen
+    
